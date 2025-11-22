@@ -187,7 +187,7 @@ body {
 .compare-card {
   flex: 0 0 49%;       /* 한 줄에 2개 */
   box-sizing: border-box; /* padding + border 포함해서 폭 계산 */
-  max-height: 400px;
+  height: auto; 
   overflow-y: auto;
   border: 1px solid #ddd;
   padding: 10px;
