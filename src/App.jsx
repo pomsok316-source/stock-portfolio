@@ -18,7 +18,7 @@ function App() {
   const [title, setTitle] = useState("");
   const [owner, setOwner] = useState("");
   const [totalInvestment, setTotalInvestment] = useState(0);
-  const [stocks, setStocks] = useState([{ name: "", ratio: 0, start: "", end: "", country: "US" }]);
+  const [stocks, setStocks] = useState([{ name: "", ratio: "", start: "", end: "", country: "US" }]);
   const [savedPortfolios, setSavedPortfolios] = useState(
     JSON.parse(localStorage.getItem("portfolios") || "[]")
   );
@@ -115,10 +115,11 @@ function App() {
   };
 
   const totalRatio = stocks.reduce((a, s) => a + Number(s.ratio), 0);
-  const totalInvestSum = stocks.reduce((a, s) => a + (totalInvestment * s.ratio) / 100, 0);
+  const totalInvestSum = stocks.reduce((a,s) => a + ((totalInvestment * Number(s.ratio || 0))/100), 0);
 
   return (
     <div className="container">
+      <div className="left-panel">
       <h1 className="main-title">📊 투자 포트폴리오 작성</h1>
 
       <div className="card">
@@ -187,13 +188,15 @@ function App() {
           </div>
         ))}
       </div>
-
+      </div>
+      
+      <div className="right-panel">
       {compareList.length>0 && (
         <div className="compare-section">
           {compareList.map((p,i)=>(
             <div key={i} className="compare-card">
               <h3>{p.title} ({p.owner})</h3>
-              <p>총투자액: {p.totalInvestment}</p>
+              <p>총투자액: {Number(p.totalInvestment).toLocaleString()}</p>
               <table>
                 <thead>
                   <tr>
@@ -203,14 +206,14 @@ function App() {
                 <tbody>
                   {p.stocks.map((s,j)=>{
                     const workingDays = calculateWorkingDays(s.start,s.end,s.country);
-                    const investAmount = (p.totalInvestment * s.ratio)/100;
+                    const investAmount = Math.round((p.totalInvestment * s.ratio)/100);
                     const dailyInvest = workingDays>0 ? Math.round(investAmount/workingDays) : 0;
                     return (
                       <tr key={j}>
                         <td>{s.name}</td>
-                        <td>{s.ratio}%</td>
-                        <td>{investAmount}</td>
-                        <td>{dailyInvest}</td>
+                        <td>{Math.round(s.ratio)}%</td>
+                        <td>{investAmount.toLocaleString()}</td>
+                        <td>{dailyInvest.toLocaleString()}</td>
                       </tr>
                     );
                   })}
@@ -220,6 +223,7 @@ function App() {
           ))}
         </div>
       )}
+    </div>
     </div>
   );
 }
